@@ -72,7 +72,7 @@ button{
 	cursor: default!important;
 	background: #f0f0f0!important;
 }
-#envWrapper, #addWrapper{
+#envWrapper, #addWrapper, #vendorsWrapper{
 	padding: 1% 1% 2% 1%;
 	border-bottom:1px solid #e0e0e0;
 }
@@ -82,7 +82,7 @@ button{
 #deleteWrapper{
 	padding: 0.1% 1%;
 }
-#deleteWrapper input{
+#deleteWrapper input, #vendorsWrapper input{
 	width: 500px;
 }
 #mapWrapper{

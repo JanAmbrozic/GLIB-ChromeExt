@@ -18,6 +18,25 @@
 			<h3>Environment</h3>
 			Development: <input type="checkbox" id="environment" name="environment"/>
 		</div>
+		
+		<!-- Vendor prefixes configuration -->
+		<div id="vendorsWrapper">
+			<h3>Vendors:</h3>
+			<!-- Github vendor, default url: "https://github.com/*"-->
+			<h3>Github</h3>
+			<input class="git-repo" id="githubVendor" type="text" placeholder="https://github.com/*">
+			<button class="delete" type="github">Reset</button>
+			
+			<!-- Gitlab vendor, default url: "https://gitlab.com/*"-->
+			<h3>Gitlab</h3>
+			<input class="git-repo" id="" type="text" placeholder="https://gitlab.com/*">
+			<button class="delete" type="github">Reset</button>
+			
+			<!-- Jira vendor, default url: "https://appirio.atlassian.net/*"-->
+			<h3>Jira</h3>
+			<input class="git-repo" id="" type="text" placeholder="https://appirio.atlassian.net/*">
+			<button class="delete" >Reset</button>
+		</div>
 
 		<div id="deleteWrapper">
 			<h3>Github Token</h3>
