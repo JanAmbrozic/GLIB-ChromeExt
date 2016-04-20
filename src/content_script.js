@@ -15,6 +15,7 @@
 var CHECK_INTERVAL = 50;
 var TOKEN_KEY_TOPCODER = 'glib::topcoder_token';
 var ENVIRONMENT = 'glib::environment';
+var VENDORS = 'glib::vendors';
 
 OAuth.initialize(OAUTH_API_KEY);
 
@@ -325,9 +326,17 @@ function launchMultipleOnTC(callback) {
   });
 }
 
+/**
+ * Initializes the script if URL matches any of the set vendors 
+ */
+function initializeScript(){
+    chrome.storage.local.get(VENDORS, function (result) {
+        setEnv();
+        setVendor();
+        // initial load
+        injectButton();
+        injectMultipleLaunchButton();
+    });
+}
 
-setEnv();
-setVendor();
-// initial load
-injectButton();
-injectMultipleLaunchButton();
+initializeScript();
