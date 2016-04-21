@@ -17,6 +17,12 @@ var TOKEN_KEY_TOPCODER = 'glib::topcoder_token';
 var ENVIRONMENT = 'glib::environment';
 var VENDORS = 'glib::vendors';
 
+var defaultVendors = {
+    github: {pattern: "https:\/\/github\.com\/.*", defaultPattern: "https:\/\/github\.com\/.*"},
+    gitlab: {pattern: "https:\/\/gitlab\.com\/.*", defaultPattern: "https:\/\/github\.com\/.*"},
+    jira: {pattern: "https:\/\/appirio\.atlassian\.net\/.*", defaultPattern: "https:\/\/github\.com\/.*"}
+};
+
 OAuth.initialize(OAUTH_API_KEY);
 
 // current view information
@@ -331,11 +337,34 @@ function launchMultipleOnTC(callback) {
  */
 function initializeScript(){
     chrome.storage.local.get(VENDORS, function (result) {
-        setEnv();
-        setVendor();
-        // initial load
-        injectButton();
-        injectMultipleLaunchButton();
+        
+        var url = document.location.href;
+        var vendors =  result[VENDORS];
+        
+        //check if VENDORS object does not yet exist in chrome storage
+        console.log(vendors)
+        if(!vendors){
+            setChromeStorage(VENDORS, defaultVendors);
+        }
+        
+        console.log(url);
+        console.log(result)
+        //loop through vendors object and only start the script if there is a domain matches
+        for (var prop in vendors) {
+          if (vendors.hasOwnProperty(prop)) {
+            console.log(prop + " -> " + vendors[prop]);
+            var regex = new RegExp(vendors[prop]);
+            //only start a script if url matches one the domains
+            if(regex.test(url)){
+                setEnv();
+                setVendor();
+                // initial load
+                injectButton();
+                injectMultipleLaunchButton();
+            }
+          }
+        }
+
     });
 }
 

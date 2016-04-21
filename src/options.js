@@ -15,6 +15,7 @@ var TOKEN_KEY_GITLAB = 'glib::gitlab_token';
 var TOKEN_KEY_TOPCODER = 'glib::topcoder_token';
 var ADD_MASS_DELIMETER = '###';
 var ENVIRONMENT = 'glib::environment';
+var VENDORS = 'glib::vendors';
 
 /**
  * Set the value in Chrome Storage
@@ -218,6 +219,45 @@ $(document).ready(function () {
       setChromeStorage('repoMap', result.repoMap);
     });
   });
+  
+      /* Vendors fields are editable. Save the data while user edits the fields */
+    $(document).on('keyup', '.vendor-input', function () {
+      var elementId = $(this).attr('id');
+      var elementVal =  $(this).val();
+      console.log(elementId);
+      chrome.storage.local.get(VENDORS, function (result) {
+        console.log("val", elementVal);
+        result[VENDORS][elementId].pattern = elementVal;
+        setChromeStorage(VENDORS, result[VENDORS]);
+      });
+    });
+    
+    /* Delete GitHub and TopCoder tokens */
+  $('.reset').click(function () {
+    var self = this;
+    vex.dialog.confirm({
+      message: 'Are you sure to reset the field ?',
+      callback: function (value) {
+        if (value) {
+          if ($(self).attr('type') == 'github') {
+            $(".reset[type='github']").prop('disabled', true);
+            chrome.storage.local.get(VENDORS, function (result) {
+              $('#github').val(result[VENDORS]['github'].defaultPattern);
+            });
+          } else if ($(self).attr('type') == 'gitlab') {
+            $(".reset[type='gitlab']").prop('disabled', true);
+            removeChromeStorage(TOKEN_KEY_GITLAB);
+            $('#gitlabToken').val('');
+          } else {
+            $(".reset[type='topcoder']").prop('disabled', true);
+            removeChromeStorage(TOKEN_KEY_TOPCODER);
+            $('#topCoderToken').val('');
+          }
+        }
+      }
+    });
+  });
+  
 });
 
 
