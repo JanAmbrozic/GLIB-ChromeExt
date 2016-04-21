@@ -16,12 +16,7 @@ var CHECK_INTERVAL = 50;
 var TOKEN_KEY_TOPCODER = 'glib::topcoder_token';
 var ENVIRONMENT = 'glib::environment';
 var VENDORS = 'glib::vendors';
-
-var defaultVendors = {
-    github: {pattern: "https:\/\/github\.com\/.*", defaultPattern: "https:\/\/github\.com\/.*"},
-    gitlab: {pattern: "https:\/\/gitlab\.com\/.*", defaultPattern: "https:\/\/github\.com\/.*"},
-    jira: {pattern: "https:\/\/appirio\.atlassian\.net\/.*", defaultPattern: "https:\/\/github\.com\/.*"}
-};
+var vendorDelimiter = ";";
 
 OAuth.initialize(OAUTH_API_KEY);
 
@@ -336,35 +331,29 @@ function launchMultipleOnTC(callback) {
  * Initializes the script if URL matches any of the set vendors 
  */
 function initializeScript(){
-    chrome.storage.local.get(VENDORS, function (result) {
-        
+    chrome.storage.local.get(VENDORS, function (result) {    
         var url = document.location.href;
         var vendors =  result[VENDORS];
-        
-        //check if VENDORS object does not yet exist in chrome storage
-        console.log(vendors)
-        if(!vendors){
-            setChromeStorage(VENDORS, defaultVendors);
-        }
-        
-        console.log(url);
-        console.log(result)
         //loop through vendors object and only start the script if there is a domain matches
         for (var prop in vendors) {
           if (vendors.hasOwnProperty(prop)) {
-            console.log(prop + " -> " + vendors[prop]);
-            var regex = new RegExp(vendors[prop]);
-            //only start a script if url matches one the domains
-            if(regex.test(url)){
-                setEnv();
-                setVendor();
-                // initial load
-                injectButton();
-                injectMultipleLaunchButton();
+            //break the pattern into an array based on the set delimiter
+            var patternArray = vendors[prop].pattern.split(vendorDelimiter);
+            //loop through the array if the match is found stop the loop and start the script. Otherwise do nothing.
+            for (var i = 0; i < patternArray.length; i++) {
+                var regex = new RegExp(patternArray[i]);
+                //only start a script if url matches one the domains
+                if(regex.test(url) && patternArray[i].length > 0){
+                    setEnv();
+                    setVendor();
+                    // initial load
+                    injectButton();
+                    injectMultipleLaunchButton();
+                    return;
+                }
+              }
             }
-          }
         }
-
     });
 }
 

@@ -70,6 +70,15 @@ $(document).ready(function () {
       $('#environment').prop('checked', result[ENVIRONMENT]);
     }
   });
+  
+    /* Populate vendors */
+  chrome.storage.local.get(VENDORS, function (result) {
+      if (result[VENDORS] !== undefined) {
+         $('#github').val(result[VENDORS]['github'].pattern);
+         $('#gitlab').val(result[VENDORS]['gitlab'].pattern);
+         $('#jira').val(result[VENDORS]['jira'].pattern);
+      }
+  });
 
     // CWD-- bind event on checkbox
   $('#environment').click(function () {
@@ -224,9 +233,7 @@ $(document).ready(function () {
     $(document).on('keyup', '.vendor-input', function () {
       var elementId = $(this).attr('id');
       var elementVal =  $(this).val();
-      console.log(elementId);
       chrome.storage.local.get(VENDORS, function (result) {
-        console.log("val", elementVal);
         result[VENDORS][elementId].pattern = elementVal;
         setChromeStorage(VENDORS, result[VENDORS]);
       });
@@ -240,22 +247,25 @@ $(document).ready(function () {
       callback: function (value) {
         if (value) {
           if ($(self).attr('type') == 'github') {
-            $(".reset[type='github']").prop('disabled', true);
-            chrome.storage.local.get(VENDORS, function (result) {
-              $('#github').val(result[VENDORS]['github'].defaultPattern);
-            });
+             resetVendor('github');
           } else if ($(self).attr('type') == 'gitlab') {
-            $(".reset[type='gitlab']").prop('disabled', true);
-            removeChromeStorage(TOKEN_KEY_GITLAB);
-            $('#gitlabToken').val('');
-          } else {
-            $(".reset[type='topcoder']").prop('disabled', true);
-            removeChromeStorage(TOKEN_KEY_TOPCODER);
-            $('#topCoderToken').val('');
+              resetVendor('gitlab');
+          } else if ($(self).attr('type') == 'jira') {
+               resetVendor('jira');
           }
         }
       }
     });
+    
+    //function that is called on reset button. Extracted to separate function so that the code is nice and there is no duplication
+    function resetVendor(vendorName){
+        chrome.storage.local.get(VENDORS, function (result) {
+          $('#' + vendorName).val(result[VENDORS][vendorName].defaultPattern);
+          result[VENDORS][vendorName].pattern = result[VENDORS][vendorName].defaultPattern;
+          setChromeStorage(VENDORS, result[VENDORS]);
+        });
+    };
+    
   });
   
 });

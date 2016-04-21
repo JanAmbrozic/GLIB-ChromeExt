@@ -70,3 +70,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   return true;
 });
+
+//on first install we want to store defaults for vendors in chrome storage// Check whether new version is installed
+chrome.runtime.onInstalled.addListener(function(details){
+    var defaultVendors = {
+        github: {pattern: "https:\\/\\/github\\.com\\/.*", defaultPattern: "https:\\/\\/github\\.com\\/.*"},
+        gitlab: {pattern: "https:\\/\\/gitlab\\.com\\/.*", defaultPattern: "https:\\/\\/gitlab\\.com\\/.*"},
+        jira: {pattern: "https:\\/\\/appirio\\.atlassian\\.net\\/.*", defaultPattern: "https:\\/\\/appirio\\.atlassian\\.net\\/.*"}
+    };
+    
+    if(details.reason == "install"){
+        var obj = {};
+        obj['glib::vendors'] = defaultVendors;
+        chrome.storage.local.set(obj);
+    }
+});
